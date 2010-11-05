@@ -1,26 +1,31 @@
 (ns hozumi.mongodb-session
+  (:use ring.middleware.session.store)
   (:require [somnium.congomongo :as mongo])
-  (:import [java.util UUID]))
+  (:import [java.util UUID Date]))
 
 (defn mongodb-store
-  "Creates a mongodb session storage engine."
   ([] (mongodb-store :ring_sessions))
   ([collection-name]
-     {:read (fn [session-key]
-	      (if-let [s (and session-key
-			      (mongo/fetch-one collection-name :where {:_id session-key}))]
-		s {}))
-      :write (fn [session-key session]
-	       (let [session (zipmap (map #(if (keyword? %) ;;work around for ::keyword -> "keyword"
-					     (-> % str (.substring 1)) %)
-					  (keys session))
-				     (vals session))]
-		 (if (and session-key (mongo/fetch-one collection-name :where {:_id session-key}))
-		   (do (mongo/update! collection-name {:_id session-key} session)
-		       session-key)
-		   (let [session-key (str (UUID/randomUUID))]
-		     (mongo/insert! collection-name (assoc session :_id session-key))
-		     session-key))))
-      :delete (fn [session-key]
-		(mongo/destroy! collection-name {:_id session-key})
-		nil)}))
+     (reify
+      SessionStore
+      (read-session
+       [_ key]
+       (if-let [entity (and key
+			    (mongo/fetch-one collection-name :where {:_id key}))]
+	 entity {}))
+      (write-session
+       [_ key data]
+       (let [data (zipmap (map #(if (keyword? %) ;;work around for ::keyword -> "keyword"
+				  (-> % str (.substring 1)) %)
+			       (keys data))
+			  (vals data))]
+	 (if-let [entity (and key (mongo/fetch-one collection-name :where {:_id key}))]
+	   (do (mongo/update! collection-name {:_id key} (assoc data :_date (:_date entity)))
+	       key)
+	   (let [key (str (UUID/randomUUID))]
+	     (mongo/insert! collection-name (assoc data :_id key :_date (Date.)))
+	     key))))
+      (delete-session
+       [_ key]
+       (mongo/destroy! collection-name {:_id key})
+       nil))))
