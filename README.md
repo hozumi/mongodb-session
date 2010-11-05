@@ -4,10 +4,10 @@ Mongodb-session use mongodb as a Clojure/Ring's http session storage.
 
 ## Usage
 ### functional way
-Using **ring.middleware.session**.
-Following examples are originated from [sandbar-examples](https://github.com/brentonashworth/sandbar-examples/blob/master/sessions/src/sandbar/examples/session_demo.clj).
+**ring.middleware.session** version. Following examples are originated from [sandbar-examples](https://github.com/brentonashworth/sandbar-examples/blob/master/sessions/src/sandbar/examples/session_demo.clj).
     (ns hello
       (:use [ring.middleware.session]
+            [somnium.congomongo]
             [hozumi.mongodb-session]))
 	    
     (mongo! :db "mydb" :host "127.0.0.1")
@@ -29,9 +29,10 @@ Then, you can use mongodb session in the same way as in-memory one.
          :session {:counter counter}}))
 
 ### statuful way
-Using [sandbar.stateful-session](https://github.com/brentonashworth/sandbar).
+[sandbar.stateful-session](https://github.com/brentonashworth/sandbar) version.
     (ns hello
       (:use [sandbar.stateful-session]
+            [somnium.congomongo]
             [hozumi.mongodb-session]))
 	    
     (mongo! :db "mydb" :host "127.0.0.1")
