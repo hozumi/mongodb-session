@@ -7,8 +7,10 @@
   [& [collection-name]]
   (let [collection-name (if collection-name collection-name :ring_sessions)]
   {:read (fn [session-key]
-	   (if-let [s (mongo/fetch-one collection-name :where {:_id session-key})]
-	     s {}))
+	   (if session-key
+	     (if-let [s (mongo/fetch-one collection-name :where {:_id session-key})]
+	       s {})
+	     {}))
    :write (fn [session-key session]
 	    (let [session (zipmap (map #(if (keyword? %) ;;work around for ::keyword -> "keyword"
 					  (-> % str (.substring 1)) %)
