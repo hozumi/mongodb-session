@@ -1,6 +1,6 @@
 # mongodb-session
 
-mongodb-session store ring's http session in mongodb.
+Mongodb-session use mongodb as a Clojure/Ring's http session storage.
 
 ## Usage
 ### functional way
