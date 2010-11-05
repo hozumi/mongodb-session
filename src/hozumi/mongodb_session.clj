@@ -11,7 +11,7 @@
 	     s {}))
    :write (fn [session-key session]
 	    (let [session (zipmap (map #(if (keyword? %) ;;work around for ::keyword -> "keyword"
-					  (apply str (rest (str %))) %)
+					  (-> % str (.substring 1)) %)
 				       (keys session))
 				  (vals session))]
 	      (if (and session-key (mongo/fetch-one collection-name :where {:_id session-key}))
