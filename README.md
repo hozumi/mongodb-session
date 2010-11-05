@@ -42,7 +42,7 @@ Let's look at the mongodb.
     { "_id" : "c4fc05b8-f0d3-467d-b179-e3d8a24de973", "counter" : 5}
 Default collection name mongodb-session use is **ring_sessions**. You can change this default collection name as seen below.
     (def app (-> my-routes
-               (rs/wrap-session {:store (mongoss/mongodb-store :my_session)})))
+               (rs/wrap-session {:store (mongoss/mongodb-store :my_sessions)})))
 
 ### Statuful access
 [sandbar.stateful-session](https://github.com/brentonashworth/sandbar) version.
