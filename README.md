@@ -5,15 +5,17 @@ Mongodb-session use mongodb as a Clojure/Ring's http session storage.
 ## Usage
 ### functional way
 Using **ring.middleware.session**.
-Following example originated from [sandbar-examples](https://github.com/brentonashworth/sandbar-examples/blob/master/sessions/src/sandbar/examples/session_demo.clj).
+Following examples are originated from [sandbar-examples](https://github.com/brentonashworth/sandbar-examples/blob/master/sessions/src/sandbar/examples/session_demo.clj).
     (ns hello
       (:use [ring.middleware.session]
             [hozumi.mongodb-session]))
-
+	    
+    (mongo! :db "mydb" :host "127.0.0.1")
+    
     (def app (-> handler
                (wrap-session {:store (mongodb-store)})))
 
-Then, you can use session like in-memory session.
+Then, you can use mongodb session in the same way as in-memory one.
     (defn functional-handler
       "Functional style of working with a session."
       [request]
@@ -31,7 +33,9 @@ Using [sandbar.stateful-session](https://github.com/brentonashworth/sandbar).
     (ns hello
       (:use [sandbar.stateful-session]
             [hozumi.mongodb-session]))
-
+	    
+    (mongo! :db "mydb" :host "127.0.0.1")
+    
     (def app (-> handler
                (wrap-stateful-session {:store (mongodb-store)})))
 
