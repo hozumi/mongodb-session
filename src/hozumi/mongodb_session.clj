@@ -1,13 +1,13 @@
 (ns hozumi.mongodb-session
-  (:use ring.middleware.session.store)
-  (:require [somnium.congomongo :as mongo])
+  (:require [somnium.congomongo :as mongo]
+	    [ring.middleware.session.store :as ringstore])
   (:import [java.util UUID Date]))
 
 (defn mongodb-store
   ([] (mongodb-store :ring_sessions))
   ([collection-name]
      (reify
-      SessionStore
+      ringstore/SessionStore
       (read-session
        [_ key]
        (if-let [entity (and key
