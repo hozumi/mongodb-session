@@ -65,11 +65,14 @@ Default collection name mongodb-session use is **ring_sessions**. You can change
 You don't need to include :session entry in the response map.
     (defn stateful-handler
       "Stateful style of working with a session."
-      []
+      [request]
       (let [counter (+ 1 (stateful/session-get :counter 0))]
         (do (stateful/session-put! :counter counter)
-            (html
-                 (layout "Stateful" counter (link-to "/functional" "Functional"))))))
+            {:status 200
+             :headers {"Content-Type" "text/html"}
+             :body (html
+                     (layout "Stateful" counter
+		             (link-to "/functional" "Functional")))})))
 
 mongodb
     > db.ring_sessions.find()
