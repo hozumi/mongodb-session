@@ -4,13 +4,14 @@ Mongodb-session use mongodb as a Clojure/Ring's http session storage.
 
 ## Usage
 ### Functional access
-**ring.middleware.session** version. Following examples are originated from [sandbar-examples](https://github.com/brentonashworth/sandbar-examples/blob/master/sessions/src/sandbar/examples/session_demo.clj).
+**ring.middleware.session** version. Following examples are originated from [sandbar-examples](https://github.com/brentonashworth/sandbar-examples/blob/master/sessions/src/sandbar/examples/session_demo.clj).<br>
+Ring-core must be higher than 0.3.0, because mongodb-session depend on the protocol defined ring.middleware.session.store.
     (ns hello
       (:require [ring.middleware.session :as rs]
                 [somnium.congomongo :as mongo]
                 [hozumi.mongodb-session :as mongoss]
 	        ...))
-Ring-core must be higher than 0.3.0, because mongodb-session depend on the protocol defined ring.middleware.session.store.
+
     (mongo/mongo! :db "mydb" :host "127.0.0.1")
 
     (defroutes my-routes ....)
