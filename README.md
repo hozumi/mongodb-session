@@ -40,7 +40,8 @@ Let's look at the mongodb.
     switched to db mydb
     > db.ring_sessions.find()
     { "_id" : "0a7047f6-ad8a-45b0-b214-ba18830b9851",
-      "_date" : "Sat Nov 06 2010 08:33:58 GMT+0900 (JST)", "counter" : 3 }
+      "_date" : "Sat Nov 06 2010 08:33:58 GMT+0900 (JST)",
+      "counter" : 3 }
 **_id** means cookie value of ring-session.<br>
 **_date** means when this session is started.<br>
 Default collection name mongodb-session use is **ring_sessions**. You can change this default collection name like below.
