@@ -12,14 +12,14 @@
 		  entity {}))
   (write-session [_ key data]
 		 ;;work around for (name ::keyword) -> "keyword"
-		 (let [data (zipmap (map #(if (keyword? %)
+		 (let [data (zipmap (map #(if (and (keyword? %) (namespace %))
 					    (-> % str (.substring 1)) %)
 					 (keys data))
 				    (vals data))
 		       entity (and key (congo/fetch-one collection-name :where {:_id key}))
 		       key-change? (or (not entity) auto-key-change?)
 		       newkey (if key-change?
-			     (str (UUID/randomUUID)) key)]
+				(str (UUID/randomUUID)) key)]
 		   (if entity
 		     (do (if key-change?
 			   (do (congo/destroy! collection-name {:_id key})
