@@ -1,52 +1,56 @@
 (ns hozumi.test-mongodb-session
   (:use [clojure.test]
 	[ring.middleware.session.store]
-	[hozumi.mongodb-session]
-	[somnium.congomongo]))
+	[hozumi.mongodb-session])
+  (:require [somnium.congomongo :as congo]))
 
 (def test-db-host "127.0.0.1")
 (def test-db "hozumi-test-mongodb-sessions")
-(defn setup! [] (mongo! :db test-db :host test-db-host))
-(defn teardown! []
-  (drop-database! test-db))
 
-(defmacro with-test-mongo [& body]
-  `(do
-     (setup!)
-     ~@body
-     (teardown!)))
+(defn server-fixture [f]
+  (congo/mongo! :db test-db :host test-db-host)
+  (f)
+  (congo/drop-database! test-db))
 
-(deftest mongo-session-read-not-exist
-  (with-test-mongo
-    (let [store (mongodb-store)]
-      (is (read-session store "non-existent")
-	  {}))))
+(use-fixtures :each server-fixture)
 
-(deftest mongo-session-create
-  (with-test-mongo
-    (let [store    (mongodb-store)
-	  sess-key (write-session store nil {:foo "bar"})
-	  entity   (read-session store sess-key)]
-      (is (not (nil? sess-key)))
-      (is (and (:_id entity) (:_date entity)))
-      (is (= (dissoc entity :_id :_date)
-	     {:foo "bar"})))))
+(deftest read-not-exist
+  (let [store (mongodb-store)]
+    (is (read-session store "non-existent")
+	{})))
 
-(deftest mongo-session-update
-  (with-test-mongo
-    (let [store     (mongodb-store)
-	  sess-key  (write-session store nil {:foo "bar"})
-	  sess-key* (write-session store sess-key {:bar "baz"})
-	  entity    (read-session store sess-key)]
-      (is (= sess-key sess-key*))
-      (is (and (:_id entity) (:_date entity)))
-      (is (= (dissoc entity :_id :_date)
-	     {:bar "baz"})))))
+(deftest session-create
+  (let [store    (mongodb-store)
+	sess-key (write-session store nil {:foo "bar"})
+	entity   (read-session store sess-key)]
+    (is (not (nil? sess-key)))
+    (is (and (:_id entity) (:_date entity)))
+    (is (= (dissoc entity :_id :_date)
+	   {:foo "bar"}))))
 
-(deftest mongo-session-delete
-  (with-test-mongo
-    (let [store    (mongodb-store)
-	  sess-key (write-session store nil {:foo "bar"})]
-      (is (nil? (delete-session store sess-key)))
-      (is (= (read-session store sess-key)
-	     {})))))
+(deftest session-update
+  (let [store     (mongodb-store)
+	sess-key  (write-session store nil {:foo "bar"})
+	sess-key* (write-session store sess-key {:bar "baz"})
+	entity    (read-session store sess-key*)]
+    (is (= sess-key sess-key*))
+    (is (and (:_id entity) (:_date entity)))
+    (is (= (dissoc entity :_id :_date)
+	   {:bar "baz"}))))
+
+(deftest session-auto-key-change
+  (let [store     (mongodb-store {:auto-key-change? true})
+	sess-key  (write-session store nil {:foo "bar"})
+	sess-key* (write-session store sess-key {:bar "baz"})
+	entity    (read-session store sess-key*)]
+    (is (not= sess-key sess-key*))
+    (is (and (:_id entity) (:_date entity)))
+    (is (= (dissoc entity :_id :_date)
+	   {:bar "baz"}))))
+
+(deftest session-delete
+  (let [store    (mongodb-store)
+	sess-key (write-session store nil {:foo "bar"})]
+    (is (nil? (delete-session store sess-key)))
+    (is (= (read-session store sess-key)
+	   {}))))

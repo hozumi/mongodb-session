@@ -4,15 +4,16 @@ Mongodb-session use mongodb as a Clojure/Ring's http session storage.
 
 ## Usage
 ### Functional access
-**ring.middleware.session** version. Following examples are originated from [sandbar-examples](https://github.com/brentonashworth/sandbar-examples/blob/master/sessions/src/sandbar/examples/session_demo.clj).<br>
+**ring.middleware.session** version.<br>
+Following examples are originated from [sandbar-examples](https://github.com/brentonashworth/sandbar-examples/blob/master/sessions/src/sandbar/examples/session_demo.clj).<br>
 Ring-core must be higher than 0.3.0, because mongodb-session depend on the protocol defined ring.middleware.session.store.
     (ns hello
       (:require [ring.middleware.session :as rs]
-                [somnium.congomongo :as mongo]
+                [somnium.congomongo :as congo]
                 [hozumi.mongodb-session :as mongoss]
 	        ...))
 
-    (mongo/mongo! :db "mydb" :host "127.0.0.1")
+    (congo/mongo! :db "mydb" :host "127.0.0.1")
 
     (defroutes my-routes ....)
     
@@ -45,9 +46,10 @@ Let's look at the mongodb.
       "counter" : 3 }
 **_id** means cookie value of ring-session.<br>
 **_date** means when this session is started.<br>
-Default collection name mongodb-session use is **ring_sessions**. You can change this default collection name like below.
-    (def app (-> my-routes
-               (rs/wrap-session {:store (mongoss/mongodb-store :my_sessions)})))
+Default collection name mongodb-session use is **ring_sessions**. You can change this like below.
+    (mongoss/mongodb-store {:collection-name :my_sessions})
+You can change session id everytime when session is updated. This behavior prevents session fixation attack.
+    (mongoss/mongodb-store {:auto-key-change? true})
 
 ### Statuful access
 [sandbar.stateful-session](https://github.com/brentonashworth/sandbar) version.
@@ -82,5 +84,4 @@ mongodb
 
 ## Installation
 Leiningen
-    [org.clojars.hozumi/mongodb-session "1.0.0-SNAPSHOT"]
-
+    [org.clojars.hozumi/mongodb-session "1.0.0"]
