@@ -84,4 +84,4 @@ mongodb
 
 ## Installation
 Leiningen
-    [org.clojars.hozumi/mongodb-session "1.0.0"]
+    [org.clojars.hozumi/mongodb-session "1.0.1"]

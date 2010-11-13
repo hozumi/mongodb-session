@@ -1,4 +1,4 @@
-(defproject org.clojars.hozumi/mongodb-session "1.0.0"
+(defproject org.clojars.hozumi/mongodb-session "1.0.1"
   :description "mongodb as http session storage"
   :dependencies [[org.clojure/clojure "1.2.0"]
                  [org.clojure/clojure-contrib "1.2.0"]
