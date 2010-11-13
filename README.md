@@ -48,7 +48,7 @@ Let's look at the mongodb.
 **_date** means when this session is started.<br>
 Default collection name mongodb-session use is **ring_sessions**. You can change this like below.
     (mongoss/mongodb-store {:collection-name :my_sessions})
-You can change session id everytime when session is updated. This behavior prevents session fixation attack.
+You can also change session id everytime when session is updated. This behavior prevents session fixation attack.
     (mongoss/mongodb-store {:auto-key-change? true})
 
 ### Statuful access
