@@ -2,6 +2,8 @@
 
 Mongodb-session use mongodb as a Clojure/Ring's http session storage.
 
+**Alternative**: This library relies on [congomongo](https://github.com/congomongo/congomongo) as a MongoDB client. If you are using [monger](http://clojuremongodb.info/), consider using [mongers built-in session support](http://clojuremongodb.info/articles/integration.html#using_mongodbbacked_ring_session_store_with_monger).
+
 ## Usage
 ### Functional access
 **ring.middleware.session** version.<br>
